@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('contact_info')->nullable();
-            $table->unsignedBigInteger('client_id')->nullable()->default(1);
+            $table->unsignedBigInteger('client_id')->nullable();
             $table->timestamps();
         });
     }

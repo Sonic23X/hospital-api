@@ -23,12 +23,14 @@ class Product extends Model
         'qr_location',
         'images',
         'is_pharmaceutical',
+        'invoice_type',
         'supplier_id',
         'client_id',
     ];
 
     protected $casts = [
         'images' => 'array',
+        'price' => 'decimal:2',
     ];
 
     public function supplier()

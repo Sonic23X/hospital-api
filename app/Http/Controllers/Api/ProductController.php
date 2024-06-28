@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Product;
 use Illuminate\Support\Facades\Storage;
+use PhpOffice\PhpSpreadsheet\IOFactory;
+use Carbon\Carbon;
 
 class ProductController extends Controller
 {
@@ -41,6 +43,13 @@ class ProductController extends Controller
                 $path = $image->store('public/product_images'); // Almacenar la imagen en el sistema de archivos
                 $imageUrls[] = Storage::url($path); // Obtener la URL de la imagen almacenada
             }
+        }
+
+        //Validar si el producto es farmacéutico
+        if ($validatedData['is_pharmaceutical']) {
+            $validatedData['invoice_type'] = 'H87';
+        } else {
+            $validatedData['invoice_type'] = 'C62';
         }
 
         $validatedData['images'] = $imageUrls;
@@ -101,5 +110,48 @@ class ProductController extends Controller
         $product->save();
 
         return response()->json($product, 200);
+    }
+
+    function importProducts(Request $request)
+    {
+        // Validar y procesar un archivo de Excel para importar productos
+        $validatedData = $request->validate([
+            'file' => 'required|file|mimes:xlsx,xls'
+        ]);
+
+        $path = $validatedData['file']->store('public/imported_files'); // Almacenar el archivo en el sistema de archivos
+
+        $spreadsheet = IOFactory::load(storage_path('app/' . $path)); // Cargar el archivo de Excel
+        $sheet = $spreadsheet->getActiveSheet(); // Obtener la hoja activa
+
+        $products = [];
+        foreach ($sheet->getRowIterator() as $row) {
+            $cellIterator = $row->getCellIterator();
+            $cellIterator->setIterateOnlyExistingCells(FALSE);
+
+            $product = [];
+            foreach ($cellIterator as $cell) {
+                $product[] = $cell->getValue();
+            }
+
+            $products[] = $product;
+        }
+
+        $header = array_shift($products);
+        $productsData = [];
+        foreach ($products as $product) {
+            $productData = [];
+            foreach ($product as $key => $value) {
+                $productData[$header[$key]] = $value;
+            }
+
+            $productsData[] = $productData;
+        }
+
+        foreach ($productsData as $productData) {
+            $product = Product::create($productData);
+        }
+
+        return response()->json($productsData, 201);
     }
 }

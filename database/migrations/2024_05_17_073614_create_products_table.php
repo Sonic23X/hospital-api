@@ -26,7 +26,8 @@ return new class extends Migration
             $table->json('images')->nullable();
             $table->boolean('is_pharmaceutical')->default(false);
             $table->foreignId('supplier_id')->constrained()->onDelete('cascade');
-            $table->unsignedBigInteger('client_id')->nullable()->default(1);
+            $table->string('invoice_type', 5);
+            $table->unsignedBigInteger('client_id')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
