@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Sale;
 use App\Models\SaleItem;
 use App\Models\Product;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -27,7 +28,6 @@ class SaleController extends Controller
     {
         $request->validate([
             'total_amount' => 'required|numeric',
-            'purchase_date' => 'required|date',
             'payment_method' => 'required|string',
             'status' => 'required|string',
             'items' => 'required|array',
@@ -36,9 +36,10 @@ class SaleController extends Controller
             'items.*.price' => 'required|numeric',
         ]);
 
-        $data = $request->only(['total_amount', 'purchase_date', 'payment_method', 'status', 'notes']);
+        $data = $request->only(['total_amount', 'payment_method', 'status', 'notes']);
         $data['user_id'] = Auth::user()->id;
         $data['client_id'] = Auth::user()->client_id;
+        $data['purchase_date'] = Carbon::now();
 
         $sale = Sale::create($data);
 
