@@ -14,7 +14,6 @@ return new class extends Migration
         Schema::create('sales', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id'); // ID del usuario que realiza la compra
-            $table->unsignedBigInteger('client_id'); // ID de la farmacia
             $table->decimal('subtotal', 10, 2); // Monto total de la compra (sin impuestos)
             $table->decimal('iva', 10, 2); // Impuestos aplicados a la compra
             $table->decimal('total_amount', 10, 2); // Monto total de la compra
