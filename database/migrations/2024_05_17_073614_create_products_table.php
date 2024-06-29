@@ -16,7 +16,9 @@ return new class extends Migration
             $table->string('name');
             $table->text('description')->nullable();
             $table->decimal('price', 8, 2);
+            $table->decimal('public_price', 8, 2);
             $table->integer('stock');
+            $table->string('min_stock');
             $table->string('category')->nullable();
             $table->date('expiry_date')->nullable();
             $table->string('batch')->nullable();
