@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\SupplierController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\SaleController;
+use App\Http\Controllers\Api\HospitalizationController;
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
@@ -20,4 +21,5 @@ Route::middleware('auth:api')->group(function () {
     Route::apiResource('suppliers', SupplierController::class);
     Route::apiResource('users', UserController::class);
     Route::apiResource('sales', SaleController::class);
+    Route::apiResource('hospitalizations', HospitalizationController::class);
 });
