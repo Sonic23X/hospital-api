@@ -40,7 +40,7 @@ class PatientController extends Controller
 
     public function show($id)
     {
-        return Patient::with('appointments')->findOrFail($id);
+        return Patient::with('appointments.doctor')->findOrFail($id);
     }
 
 
