@@ -44,7 +44,7 @@ class AppointmentController extends Controller
             ->first();
 
         if ($existingAppointment) {
-            return response()->json(['error' => 'Ya existe una cita con este doctor a la misma hora.'], 409);
+            return response()->json(['message' => 'Ya existe una cita con este doctor a la misma hora.'], 409);
         }
 
         $patient = Patient::create([
@@ -83,7 +83,7 @@ class AppointmentController extends Controller
         ]);
 
         if (now()->greaterThan($appointment->appointment_date)) {
-            return response()->json(['error' => 'No se puede editar una cita pasada.'], 422);
+            return response()->json(['message' => 'No se puede editar una cita pasada.'], 422);
         }
 
         $appointment->patient->update([
@@ -108,7 +108,7 @@ class AppointmentController extends Controller
     public function cancel(Appointment $appointment)
     {
         if (now()->greaterThan($appointment->appointment_date)) {
-            return response()->json(['error' => 'No se puede cancelar una cita pasada.'], 422);
+            return response()->json(['message' => 'No se puede cancelar una cita pasada.'], 422);
         }
 
         $appointment->status = 'cancelled';

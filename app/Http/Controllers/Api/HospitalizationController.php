@@ -66,7 +66,7 @@ class HospitalizationController extends Controller
         $hospitalization = Hospitalization::findOrFail($id);
 
         if ($hospitalization->date_out !== null) {
-            return response()->json(['error' => 'No se puede eliminar el registro porque ya tiene una fecha de salida.'], 403);
+            return response()->json(['message' => 'No se puede eliminar el registro porque ya tiene una fecha de salida.'], 403);
         }
 
         $hospitalization->delete();
