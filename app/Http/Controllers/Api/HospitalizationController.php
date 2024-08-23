@@ -22,9 +22,8 @@ class HospitalizationController extends Controller
             'date_in' => 'required|date',
             'date_out' => 'nullable|date|after_or_equal:date_in',
             // 'room_id' => 'required|exists:rooms,id',
-            // 'patient_id' => 'required|exists:patients,id',
+            'patient_id' => 'required|exists:patients,id',
             'room_id' => 'required',
-            'patient_id' => 'required',
             'patient_familiar_name' => 'required|string|max:255',
             'patient_familiar_phone' => 'required|string|max:255',
         ]);
@@ -51,9 +50,8 @@ class HospitalizationController extends Controller
             'date_in' => 'required|date',
             'date_out' => 'nullable|date|after_or_equal:date_in',
             // 'room_id' => 'required|exists:rooms,id',
-            // 'patient_id' => 'required|exists:patients,id',
+            'patient_id' => 'required|exists:patients,id',
             'room_id' => 'required',
-            'patient_id' => 'required',
             'patient_familiar_name' => 'required|string|max:255',
             'patient_familiar_phone' => 'required|string|max:255',
         ]);
