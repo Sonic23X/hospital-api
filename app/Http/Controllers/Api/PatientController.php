@@ -17,26 +17,55 @@ class PatientController extends Controller
         return response()->json($patients);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'birthdate' => 'required|date',
+            'address' => 'required|string|max:255',
+            'phone' => 'required|string|max:20',
+            'gender' => 'required|string|max:10',
+        ]);
+
+        $patient = Patient::create([
+            'name' => $request->name,
+            'birthdate' => $request->birthdate,
+            'address' => $request->address,
+            'phone' => $request->phone,
+            'gender' => $request->gender,
+        ]);
+
+        return response()->json($patient, 201);
     }
 
     public function show($id)
     {
-        return Patient::findOrFail($id);
+        return Patient::with('appointments')->findOrFail($id);
     }
 
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, Patient $patient)
     {
-        //
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'birthdate' => 'required|date',
+            'address' => 'required|string|max:255',
+            'phone' => 'required|string|max:20',
+            'gender' => 'required|string|max:10',
+        ]);
+
+        $patient->update([
+            'name' => $request->name,
+            'birthdate' => $request->birthdate,
+            'address' => $request->address,
+            'phone' => $request->phone,
+            'gender' => $request->gender,
+        ]);
+        
+        return response()->json($patient, 201);
     }
 
     /**

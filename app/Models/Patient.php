@@ -5,6 +5,7 @@ namespace App\Models;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Patient extends Model
 {
@@ -17,6 +18,7 @@ class Patient extends Model
         'phone',
         'gender',
     ];
+    protected $appends = ['age'];
 
     public function getAgeAttribute()
     {
@@ -26,5 +28,10 @@ class Patient extends Model
     public function setNameAttribute($value)
     {
         $this->attributes['name'] = ucwords(strtolower($value));
+    }
+
+    public function appointments() :HasMany
+    {
+        return $this->hasMany(Appointment::class);
     }
 }

@@ -14,7 +14,8 @@ return new class extends Migration
         Schema::create('appointments', function (Blueprint $table) {
             $table->id();
             $table->foreignId('patient_id')->constrained('patients')->onDelete('cascade');
-            $table->unsignedBigInteger('doctor_id')->nullable(); 
+            $table->unsignedBigInteger('doctor_id'); 
+            $table->unsignedBigInteger('specialty_id'); 
             $table->date('appointment_date');
             $table->time('appointment_time');
             $table->string('consultation_type');
@@ -22,7 +23,8 @@ return new class extends Migration
             $table->string('status')->default('pending'); 
             $table->timestamps();
             
-            // $table->foreign('doctor_id')->references('id')->on('doctors');
+            $table->foreign('doctor_id')->references('id')->on('doctors');
+            $table->foreign('specialty_id')->references('id')->on('specialties');
         });
     }
 

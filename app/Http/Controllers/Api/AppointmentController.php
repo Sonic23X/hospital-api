@@ -14,13 +14,13 @@ class AppointmentController extends Controller
      */
     public function index()
     {
-        $appointments = Appointment::with("patient")->get();
+        $appointments = Appointment::with(["patient", "doctor", "specialty"])->get();
         return response()->json($appointments);
     }
 
     public function show($id)
     {
-        return Appointment::with("patient")->findOrFail($id);
+        return Appointment::with(["patient", "doctor", "specialty"])->findOrFail($id);
     }
 
     public function store(Request $request)
@@ -29,7 +29,8 @@ class AppointmentController extends Controller
             'appointment_date' => 'required|date|after_or_equal:today',
             'appointment_time' => 'required|date_format:H:i',
             'consultation_type' => 'required|string',
-            'doctor_id' => 'required|integer',
+            'doctor_id' => 'required|integer|exists:doctors,id',
+            'specialty_id' => 'required|integer|exists:specialties,id',
             'reason' => 'required|string',
             'patient_name' => 'required|string|max:255',
             'patient_birthdate' => 'required|date',
@@ -60,6 +61,7 @@ class AppointmentController extends Controller
             'appointment_time' => $request->appointment_time,
             'consultation_type' => $request->consultation_type,
             'doctor_id' => $request->doctor_id,
+            'specialty_id' => $request->specialty_id,
             'reason' => $request->reason,
             'patient_id' => $patient->id
         ]);
@@ -73,7 +75,8 @@ class AppointmentController extends Controller
             'appointment_date' => 'required|date|after_or_equal:today',
             'appointment_time' => 'required|date_format:H:i',
             'consultation_type' => 'required|string',
-            'doctor_id' => 'required|integer',
+            'doctor_id' => 'required|integer|exists:doctors,id',
+            'specialty_id' => 'required|integer|exists:specialties,id',
             'reason' => 'required|string',
             'patient_name' => 'required|string|max:255',
             'patient_birthdate' => 'required|date',
@@ -99,6 +102,7 @@ class AppointmentController extends Controller
             'appointment_time' => $request->appointment_time,
             'consultation_type' => $request->consultation_type,
             'doctor_id' => $request->doctor_id,
+            'specialty_id' => $request->specialty_id,
             'reason' => $request->reason
         ]);
 
