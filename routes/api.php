@@ -11,6 +11,7 @@ use App\Http\Controllers\Api\SupplierController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\SaleController;
 use App\Http\Controllers\Api\HospitalizationController;
+use App\Http\Controllers\Api\InvoiceController;
 use App\Http\Controllers\Api\PatientController;
 use App\Http\Controllers\Api\PatientRecordController;
 use App\Http\Controllers\SpecialtyController;
@@ -36,4 +37,13 @@ Route::middleware('auth:api')->group(function () {
     Route::post('/patients/{patientId}/records', [PatientRecordController::class, 'store']);
     Route::delete('/patients/records/{id}', [PatientRecordController::class, 'destroy']);
     Route::get('/patients/{patientId}/records', [PatientRecordController::class, 'index']);
+
+    Route::get('invoices-client', [InvoiceController::class, 'indexClient']);
+    Route::get('invoices-supplier', [InvoiceController::class, 'indexSupplier']);
+    Route::get('invoice-client/{id}', [InvoiceController::class, 'showClient']);
+    Route::get('invoice-supplier/{id}', [InvoiceController::class, 'showSupplier']);
+    Route::get('invoices-cfdiuses', [InvoiceController::class, 'indexCfdiuses']);
+    Route::get('invoices-regimes', [InvoiceController::class, 'indexRegimes']);
+    Route::post('/invoice-client', [InvoiceController::class, 'storeClient']);
+    Route::post('/invoice-supplier', [InvoiceController::class, 'storeSupplier']);
 });
