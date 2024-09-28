@@ -34,8 +34,7 @@ class Invoice extends Model
         'last_digits_card', 
         'status',
         'folio',
-        'facturama_id', 
-        'facturama_url'
+        'facturama_id'
     ];
 
     public function patient()

@@ -9,6 +9,7 @@ use App\Models\FiscalRegime;
 use App\Models\Invoice;
 use App\Models\Sale;
 use App\Models\Supplier;
+use App\Services\FacturamaService;
 use Illuminate\Http\Request;
 use SimpleXMLElement;
 
@@ -18,8 +19,8 @@ class InvoiceController extends Controller
     {
         $request->validate([
             'patient_id' => 'nullable|exists:patients,id',
-            'sale_id' => 'nullable|exists:patients,id',
-            'rfc' => 'required|regex:/^([A-ZÑ&]{3,4})?(?:[0-9]{2}(?:0[1-9]|1[0-2])(?:0[1-9]|[12][0-9]|3[01]))?([A-Z\d]{2})([A\d])$/',
+            'sale_id' => 'required|exists:patients,id',
+            'rfc' => ['required', 'regex:/^([A-ZÑ&]{3,4})([0-9]{2}(0[1-9]|1[0-2])(0[1-9]|[12][0-9]|3[01]))([A-Z\d]{2})([A\d])$/i'],
             'business_name' => 'required|string|max:255',
             'fiscal_regime' => 'required|exists:fiscal_regimes,code',
             'cfdi_use' => 'required|exists:cfdi_uses,code',
@@ -34,8 +35,44 @@ class InvoiceController extends Controller
             'email' => 'required|email',
         ]);
 
-        $sale = Sale::findOrFail($request->sale_id);
+        $sale = Sale::with('items.product')->findOrFail($request->sale_id);
+        $items = $sale->items->map(function ($item) {
+            return [
+                'ProductCode' => $item->product_id,
+                'Description' => $item->product->name, 
+                'Unit' => 'Medicinas',  
+                'UnitPrice' => $item->price,
+                'Quantity' => $item->quantity,
+                'Subtotal' => $item->subtotal,
+                'Taxes' => [
+                    [
+                        'Total' => $item->subtotal * 0.16,
+                        'Name' => 'IVA',
+                        'Rate' => 0.16,
+                        'IsRetention' => false,
+                    ],
+                ],
+                'Total' => $item->subtotal + ($item->subtotal * 0.16), 
+            ];
+        })->toArray();
 
+        $facturama = new FacturamaService();
+        $data = [
+            'CfdiType' => 'I',
+            'Receiver' => [
+                'Name' => $request->business_name,
+                'CfdiUse' => $request->cfdi_use,
+                'Rfc' => $request->rfc,
+                'FiscalRegime' => $request->fiscal_regime,
+                'TaxZipCode' => $request->zipcode,
+            ],
+            'Items' => $items,
+        ];
+        return response()->json($data, 201);
+        $invoice = $facturama->createInvoice($data);
+        if(!$invoice) {
+            return response()->json(["message" => "Error al crear la factura"], 400);
+        }
         CustomerBillingData::create([
             'patient_id' => $request->patient_id,
             'rfc' => $request->rfc,
@@ -52,7 +89,6 @@ class InvoiceController extends Controller
             'state' => $request->state, 
             'email' => $request->email, 
         ]);
-        // Servicio de facturama
 
         $invoice = Invoice::create([
             'patient_id' => $request->sale_id,
@@ -74,9 +110,8 @@ class InvoiceController extends Controller
             'iva' => $sale->iva, 
             'total_amount' => $sale->total_amount, 
             'payment_method' => $sale->payment_method, 
-            'last_digits_card' => $request->last_digits_card, 
-            'facturama_id' => null, 
-            'facturama_url' => null, 
+            'last_digits_card' => $request->last_digits_card,
+            'facturama_id' => $invoice['Id'],
         ]);
 
         return response()->json($invoice, 201);

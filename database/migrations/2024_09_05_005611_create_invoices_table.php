@@ -37,7 +37,6 @@ return new class extends Migration
             $table->string('folio')->nullable();
             $table->string('status')->default("pending");
             $table->string('facturama_id')->nullable();  
-            $table->string('facturama_url')->nullable(); 
             $table->timestamps();
         });
     }
