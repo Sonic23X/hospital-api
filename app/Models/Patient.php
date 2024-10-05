@@ -34,4 +34,14 @@ class Patient extends Model
     {
         return $this->hasMany(Appointment::class);
     }
+
+    public function customer_billing_data()
+    {
+        return $this->hasOne(CustomerBillingData::class);
+    }
+
+    public function invoices()
+    {
+        return $this->hasMany(Invoice::class);
+    }
 }
